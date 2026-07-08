@@ -18,7 +18,15 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
 CORS(app)  # allow the Flutter app (any origin) to call this API
 
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(BASE_DIR, 'cases.db')}"
+database_url = os.environ.get("postgresql://tracker_t0to_user:n5O9uJx5yUqpUeTqMzSKPJWPfe1WxQIl@dpg-d97dggvavr4c738ae31g-a/tracker_t0to")
+if database_url:
+    # Render (and some other hosts) hand out "postgres://" URLs, but
+    # SQLAlchemy 2.x / psycopg2 require the "postgresql://" scheme.
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(BASE_DIR, 'cases.db')}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
