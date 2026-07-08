@@ -1,5 +1,10 @@
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timezone
+
+
+def _utcnow():
+    """Timezone-aware replacement for the deprecated datetime.utcnow()."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 class Case(db.Model):
@@ -20,8 +25,8 @@ class Case(db.Model):
     # One of: "filed", "not_filed"
     affidavit_status = db.Column(db.String(20), nullable=False, default="not_filed")
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=_utcnow)
+    updated_at = db.Column(db.DateTime, default=_utcnow, onupdate=_utcnow)
 
     def to_dict(self):
         return {
@@ -44,7 +49,7 @@ class Device(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     fcm_token = db.Column(db.String(500), unique=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=_utcnow)
 
 
 class NotificationLog(db.Model):
@@ -54,4 +59,4 @@ class NotificationLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     case_id = db.Column(db.Integer, db.ForeignKey("cases.id"), nullable=False)
     next_hearing_date = db.Column(db.Date, nullable=False)
-    sent_at = db.Column(db.DateTime, default=datetime.utcnow)
+    sent_at = db.Column(db.DateTime, default=_utcnow)
