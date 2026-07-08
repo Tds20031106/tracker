@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
 CORS(app)  # allow the Flutter app (any origin) to call this API
 
-database_url = os.environ.get("postgresql://tracker_t0to_user:n5O9uJx5yUqpUeTqMzSKPJWPfe1WxQIl@dpg-d97dggvavr4c738ae31g-a/tracker_t0to")
+database_url = os.environ.get("DATABASE_URL")
 if database_url:
     # Render (and some other hosts) hand out "postgres://" URLs, but
     # SQLAlchemy 2.x / psycopg2 require the "postgresql://" scheme.
